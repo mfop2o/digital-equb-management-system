@@ -2,13 +2,16 @@
 
 namespace App\Providers;
 
-/* @chisel-registration */
-
 use App\Actions\Fortify\CreateNewUser;
-/* @end-chisel-registration */
 use App\Actions\Fortify\ResetUserPassword;
+use App\Enums\UserStatus;
+use App\Models\User;
+use App\Services\AuditService;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -35,6 +38,16 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+
+        Event::listen(function (Login $event) {
+            if (! $event->user instanceof User) {
+                return;
+            }
+
+            $event->user->forceFill(['last_login_at' => now()])->save();
+
+            app(AuditService::class)->log('auth.login', $event->user);
+        });
     }
 
     /**
@@ -43,9 +56,31 @@ class FortifyServiceProvider extends ServiceProvider
     private function configureActions(): void
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
-        /* @chisel-registration */
+
+        // Public self-registration: visitors create their own member account.
         Fortify::createUsersUsing(CreateNewUser::class);
-        /* @end-chisel-registration */
+
+        // Reject credentials for accounts that are not active so a deactivated
+        // or suspended user cannot establish a session at all.
+        Fortify::authenticateUsing(function (Request $request) {
+            $username = $request->input(Fortify::username());
+
+            if (config('fortify.lowercase_usernames') && is_string($username)) {
+                $username = Str::lower($username);
+            }
+
+            $user = User::query()
+                ->where('email', $username)
+                ->first();
+
+            if (! $user || $user->status !== UserStatus::Active) {
+                return null;
+            }
+
+            return Hash::check($request->input('password'), $user->password)
+                ? $user
+                : null;
+        });
     }
 
     /**
@@ -55,6 +90,11 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::loginView(fn (Request $request) => Inertia::render('auth/login', [
             'canResetPassword' => Features::enabled(Features::resetPasswords()),
+            'status' => $request->session()->get('status'),
+        ]));
+
+        Fortify::registerView(fn (Request $request) => Inertia::render('auth/register', [
+            'passwordRules' => Password::defaults()->toPasswordRulesString(),
             'status' => $request->session()->get('status'),
         ]));
 
@@ -73,12 +113,6 @@ class FortifyServiceProvider extends ServiceProvider
             'status' => $request->session()->get('status'),
         ]));
         /* @end-chisel-email-verification */
-
-        /* @chisel-registration */
-        Fortify::registerView(fn () => Inertia::render('auth/register', [
-            'passwordRules' => Password::defaults()->toPasswordRulesString(),
-        ]));
-        /* @end-chisel-registration */
 
         /* @chisel-2fa */
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));

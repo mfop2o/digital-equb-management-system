@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Spatie\Permission\Models\Permission;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -35,11 +36,30 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $isSuperAdmin = $user?->isSuperAdmin() ?? false;
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'logo_url' => asset('assets/logo.png') . '?v=' . (file_exists(public_path('assets/logo.png')) ? filemtime(public_path('assets/logo.png')) : time()),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'roles' => $user?->getRoleNames()->sort()->values()->all() ?? [],
+                'permissions' => $user === null
+                    ? []
+                    : ($isSuperAdmin
+                        ? Permission::query()->pluck('name')->sort()->values()->all()
+                        : $user->getAllPermissions()->pluck('name')->sort()->values()->all()),
+                'is_super_admin' => $isSuperAdmin,
+                'is_auditor' => $user?->isAuditor() ?? false,
+                'must_change_password' => $user === null ? false : $user->must_change_password,
+                'two_factor_enabled' => $user !== null && $user->two_factor_confirmed_at !== null,
+            ],
+            'organization' => [
+                'name' => config('app.name'),
+                'timezone' => config('equb.display_timezone'),
+                'currency' => config('equb.currency'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

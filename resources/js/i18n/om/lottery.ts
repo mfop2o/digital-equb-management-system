@@ -1,0 +1,23 @@
+export const lottery = {
+    title: 'Carraa fi Guyyoota Carraa',
+    subtitle: 'Marsaalee kaffaltiif sirna carraa ifa, haqa-qabeessa fi ofumaan',
+    drum: 'Dibbee Carraa',
+    eligibleMembers: 'Hirmaattota Ulaagaa Guutan',
+    spinAndDraw: 'Naannessi Carraa Baasi',
+    drawing: "Mo'ataa baasaa jira...",
+    winner: "Mo'ataan Filatameera",
+    drawHistory: 'Seenaa Carraa',
+    excludePastWinners: "Mo'attoota duraa baasi",
+    randomSeed: 'Koodii Carraa Kiriptoogiraafiksii',
+    congratulations: "Baga gammaddan mo'ataa carraa!",
+    noEligible:
+        'Marsaa kana keessatti miseensonni hundi kaffaltii carraa fudhataniiru.',
+    conductNextDraw: 'Carraa Itti Aanu Baasi',
+    drawsConducted: 'Carraalee Baafaman',
+    pendingDraws: 'Carraalee Hfian',
+    newDraw: 'Carraa Haaraa',
+    noDraws: 'Hanga ammaatti carraan hin baafamne',
+    audit: 'Oodiitii Godhi',
+    drawNumber: 'Lakkoofsa Carraa #',
+    method: 'Mala',
+};

@@ -1,0 +1,17 @@
+export const withdrawals = {
+    title: 'የአባላት መልቀቂያ',
+    subtitle: 'የአባላት መልቀቂያ ጥያቄዎች እና የዑደት ማጠቃለያ ክፍያዎች ሂደት',
+    requestWithdrawal: 'የመልቀቂያ ጥያቄ አቅርብ',
+    totalRequests: 'አጠቃላይ ጥያቄዎች',
+    pendingReview: 'ግምገማ በመጠባበቅ ላይ',
+    settlementType: 'የሂሳብ ማጠቃለያ ዓይነት',
+    settlementAmount: 'የሂሳብ ማጠቃለያ መጠን',
+    reviewWithdrawal: 'የመልቀቂያ ጥያቄ ገምግም',
+    cannotWithdrawAfterPayout: 'ዕጣ የደረሳቸው አባላት ሙሉ ክፍያ ሳይፈጽሙ መልቀቅ አይችሉም።',
+    makerCheckerWithdrawal: 'ጠያቂው የራሱን መልቀቂያ ራሱ ማጽደቅ አይችልም።',
+    requestsList: 'የመልቀቂያ ጥያቄዎች ዝርዝር',
+    noRequests: 'እስካሁን የቀረበ የመልቀቂያ ጥያቄ የለም።',
+    settled: 'የተቋጨ',
+    memberReason: 'የአባሉ ምክንያት',
+    submittedAt: 'የቀረበበት ቀን',
+};

@@ -29,6 +29,8 @@ export default defineConfig({
         }),
     ]),
     server: {
+        host: 'localhost',
+        port: 5173,
         watch: {
             ignored: [
                 '**/.agents/**',
@@ -66,6 +68,8 @@ export default defineConfig({
         ignorePatterns: [
             '.github/**',
             'composer.json',
+            'phpstan-*.json',
+            'phpstan-baseline-temp.neon',
             'resources/js/components/ui/*',
             'resources/views/mail/*',
         ],

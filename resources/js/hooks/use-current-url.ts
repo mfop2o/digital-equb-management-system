@@ -26,37 +26,62 @@ export type UseCurrentUrlReturn = {
     whenCurrentUrl: WhenCurrentUrlFn;
 };
 
+function normalizePath(path: string): string {
+    const pathname = path.split(/[?#]/)[0] ?? path;
+
+    if (pathname === '') {
+        return '/';
+    }
+
+    const withLeadingSlash = pathname.startsWith('/')
+        ? pathname
+        : `/${pathname}`;
+
+    return withLeadingSlash === '/'
+        ? '/'
+        : withLeadingSlash.replace(/\/+$/, '');
+}
+
+function pathFromHref(href: NonNullable<InertiaLinkProps['href']>): string {
+    const urlString = toUrl(href);
+
+    if (!urlString.startsWith('http')) {
+        return normalizePath(urlString);
+    }
+
+    try {
+        return normalizePath(new URL(urlString).pathname);
+    } catch {
+        return normalizePath(urlString);
+    }
+}
+
 export function useCurrentUrl(): UseCurrentUrlReturn {
     const page = usePage();
-    const currentUrlPath = new URL(
-        page.url,
+
+    const currentUrlPath =
         typeof window !== 'undefined'
-            ? window.location.origin
-            : 'http://localhost',
-    ).pathname;
+            ? new URL(page.url, window.location.origin).pathname
+            : normalizePath(page.url);
 
     const isCurrentUrl: IsCurrentUrlFn = (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         currentUrl?: string,
         startsWith: boolean = false,
     ) => {
-        const urlToCompare = currentUrl ?? currentUrlPath;
-        const urlString = toUrl(urlToCheck);
+        const urlToCompare = normalizePath(currentUrl ?? currentUrlPath);
+        const urlString = pathFromHref(urlToCheck);
 
-        const comparePath = (path: string): boolean =>
-            startsWith ? urlToCompare.startsWith(path) : path === urlToCompare;
-
-        if (!urlString.startsWith('http')) {
-            return comparePath(urlString);
+        if (!startsWith) {
+            return urlString === urlToCompare;
         }
 
-        try {
-            const absoluteUrl = new URL(urlString);
-
-            return comparePath(absoluteUrl.pathname);
-        } catch {
-            return false;
-        }
+        // Compare complete path segments so `/groups` never lights up on
+        // `/groups/12`, and `/members` never lights up on `/memberships`.
+        return (
+            urlToCompare === urlString ||
+            urlToCompare.startsWith(urlString === '/' ? '/' : `${urlString}/`)
+        );
     };
 
     const isCurrentOrParentUrl: IsCurrentOrParentUrlFn = (

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -61,4 +62,38 @@ class UserFactory extends Factory
         ]);
     }
     /* @end-chisel-2fa */
+
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => UserStatus::Inactive,
+            'deactivated_at' => now(),
+            'deactivation_reason' => 'Deactivated by test',
+        ]);
+    }
+
+    public function suspended(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => UserStatus::Suspended,
+            'deactivated_at' => now(),
+            'deactivation_reason' => 'Suspended by test',
+        ]);
+    }
+
+    public function locked(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => UserStatus::Locked,
+            'deactivated_at' => now(),
+            'deactivation_reason' => 'Locked by test',
+        ]);
+    }
+
+    public function mustChangePassword(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'must_change_password' => true,
+        ]);
+    }
 }

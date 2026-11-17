@@ -9,10 +9,11 @@ class ExampleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_returns_a_successful_response()
+    public function test_home_renders_public_landing_page_for_guests()
     {
         $response = $this->get(route('home'));
 
         $response->assertOk();
+        $response->assertInertia(fn ($page) => $page->component('welcome'));
     }
 }

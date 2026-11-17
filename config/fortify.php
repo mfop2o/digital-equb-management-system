@@ -167,9 +167,9 @@ return [
     */
 
     'features' => [
-        /* @chisel-registration */
+        // Public self-registration: visitors create their own member account
+        // (email verification is enforced by the verified middleware).
         Features::registration(),
-        /* @end-chisel-registration */
         Features::resetPasswords(),
         /* @chisel-email-verification */
         Features::emailVerification(),

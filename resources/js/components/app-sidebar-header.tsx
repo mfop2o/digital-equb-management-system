@@ -1,4 +1,6 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
@@ -8,10 +10,19 @@ export function AppSidebarHeader({
     breadcrumbs?: BreadcrumbItemType[];
 }) {
     return (
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-sidebar-border/50 px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
-            <div className="flex items-center gap-2">
-                <SidebarTrigger className="-ml-1" />
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border/60 bg-background/80 px-3 backdrop-blur transition-[height] ease-linear supports-[backdrop-filter]:bg-background/60 sm:px-4 md:h-16">
+            <SidebarTrigger className="-ml-1 shrink-0" />
+            {breadcrumbs.length > 0 && (
+                <Separator
+                    orientation="vertical"
+                    className="mr-1 hidden h-5 sm:block"
+                />
+            )}
+            <div className="min-w-0 flex-1">
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+                <LanguageSwitcher variant="outline" size="sm" showLabel />
             </div>
         </header>
     );

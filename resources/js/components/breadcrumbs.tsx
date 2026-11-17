@@ -15,36 +15,57 @@ export function Breadcrumbs({
 }: {
     breadcrumbs: BreadcrumbItemType[];
 }) {
+    if (breadcrumbs.length === 0) {
+        return null;
+    }
+
+    const last = breadcrumbs[breadcrumbs.length - 1];
+
     return (
         <>
-            {breadcrumbs.length > 0 && (
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        {breadcrumbs.map((item, index) => {
-                            const isLast = index === breadcrumbs.length - 1;
+            {/* Mobile: keep the header light by showing only the current page. */}
+            <Breadcrumb className="min-w-0 sm:hidden">
+                <BreadcrumbList className="min-w-0 flex-nowrap">
+                    <BreadcrumbItem className="min-w-0">
+                        <BreadcrumbPage className="truncate text-sm font-medium">
+                            {last.title}
+                        </BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
 
-                            return (
-                                <Fragment key={index}>
-                                    <BreadcrumbItem>
-                                        {isLast ? (
-                                            <BreadcrumbPage>
+            {/* Desktop: full trail, with long labels truncated. */}
+            <Breadcrumb className="hidden min-w-0 sm:block">
+                <BreadcrumbList className="min-w-0 flex-nowrap">
+                    {breadcrumbs.map((item, index) => {
+                        const isLast = index === breadcrumbs.length - 1;
+
+                        return (
+                            <Fragment key={`${item.title}-${index}`}>
+                                <BreadcrumbItem className="min-w-0">
+                                    {isLast ? (
+                                        <BreadcrumbPage className="max-w-[22rem] truncate font-medium">
+                                            {item.title}
+                                        </BreadcrumbPage>
+                                    ) : (
+                                        <BreadcrumbLink
+                                            asChild
+                                            className="max-w-[16rem] truncate"
+                                        >
+                                            <Link href={item.href}>
                                                 {item.title}
-                                            </BreadcrumbPage>
-                                        ) : (
-                                            <BreadcrumbLink asChild>
-                                                <Link href={item.href}>
-                                                    {item.title}
-                                                </Link>
-                                            </BreadcrumbLink>
-                                        )}
-                                    </BreadcrumbItem>
-                                    {!isLast && <BreadcrumbSeparator />}
-                                </Fragment>
-                            );
-                        })}
-                    </BreadcrumbList>
-                </Breadcrumb>
-            )}
+                                            </Link>
+                                        </BreadcrumbLink>
+                                    )}
+                                </BreadcrumbItem>
+                                {!isLast && (
+                                    <BreadcrumbSeparator className="shrink-0" />
+                                )}
+                            </Fragment>
+                        );
+                    })}
+                </BreadcrumbList>
+            </Breadcrumb>
         </>
     );
 }

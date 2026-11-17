@@ -1,0 +1,16 @@
+export const dashboard = {
+    title: 'አመራር ዳሽቦርድ',
+    subtitle: 'የነቁ የእቁብ ቡድኖች፣ የገንዘብ እንቅስቃሴ እና የአባላት ክፍያ ሁኔታ አጠቃላይ እይታ',
+    totalGroups: 'ንቁ የእቁብ ቡድኖች',
+    totalMembers: 'የተመዘገቡ አባላት',
+    activeCapital: 'አጠቃላይ የካፒታል መጠን',
+    complianceRate: 'የክፍያ አሰባሰብ ምጣኔ',
+    recentGroups: 'የቅርብ ጊዜ የእቁብ ቡድኖች',
+    recentMembers: 'የቅርብ ጊዜ የተመዘገቡ አባላት',
+    createGroup: 'አዲስ እቁብ ጀምር',
+    registerMember: 'አዲስ አባል መዝግብ',
+    viewAllGroups: 'ሁሉንም እቁቦች ተመልከት',
+    viewAllMembers: 'ሁሉንም አባላት ተመልከት',
+    noRecentGroups: 'እስካሁን የተፈጠረ የእቁብ ቡድን የለም።',
+    noRecentMembers: 'እስካሁን የተመዘገበ አባል የለም።',
+};

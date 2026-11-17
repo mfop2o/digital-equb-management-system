@@ -11,4 +11,6 @@ export type NavItem = {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    /** Only highlight when the URL matches exactly instead of a parent path. */
+    exact?: boolean;
 };
